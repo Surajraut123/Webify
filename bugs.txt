@@ -1,0 +1,2 @@
+- When we we try to remove favourite news, then it removes but its image goes to its next News.
+- While Adding favourite news, then  tooltip is not updating for the same
