@@ -7,20 +7,34 @@ export const newsDataObjectSlice = createSlice({
     initialState: {
         newsObject: [],
         favNewsObject : [],
-        pageNumber: 0
+        pageNumber: 0,
+        filters :{
+            language: [{ code: 'en', label: 'English' }],
+            country: [{ code: 'in', label: 'India' }],
+            categories: [{ code: 'general', label: 'general' }]
+        },
+        applyFilterTriggered: false
     },
     reducers: {
         appendNews: (state, action) => {
             state.newsObject = [...state.newsObject, ...action.payload],
             state.pageNumber = state.pageNumber + 1;
-            console.log("called hre now pageNumber is  : ", state.pageNumber)
+            
         },
         appendFavNews: (state, action) => {
             state.favNewsObject = action.payload
+        },
+        filteredNews: (state, action) => {
+            const {selectedOptions, entityType} = action.payload;
+            state.filters[entityType] = selectedOptions;
+        },
+        checkApplyFilterTriggered: (state, action) => {
+            state.applyFilterTriggered = !action.payload
+            console.log("action : ", action.payload)
         }
     }
 })
 
-export const {appendNews, appendFavNews, pageNumber} = newsDataObjectSlice.actions
+export const {appendNews, appendFavNews, pageNumber,filteredNews, checkApplyFilterTriggered} = newsDataObjectSlice.actions
 
 export default newsDataObjectSlice.reducer

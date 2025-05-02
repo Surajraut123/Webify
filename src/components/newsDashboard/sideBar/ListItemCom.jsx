@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { Box, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Filter from './Filter'
-const ListItemCom = ({label, icon, setFilters}) => {
+import FilterNews from './FilterNews';
+const ListItemCom = ({label, icon}) => {
 
     
   const[visibility, setVisibility] = useState(false)
@@ -25,7 +26,8 @@ const ListItemCom = ({label, icon, setFilters}) => {
                   width: '100%', 
                   display: 'flex', 
                   alignItems: 'center',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  marginBottom: '1rem'
                 }}
                 onClick={handleFilterVisibillity}
             >
@@ -39,7 +41,8 @@ const ListItemCom = ({label, icon, setFilters}) => {
                 <KeyboardArrowDownIcon sx={{ position: 'absolute', right: 0 }} />
             </ListItemButton>
 
-            {visibility && <Filter entity={label} setFilters={setFilters}/>}
+            {/* {visibility && <Filter entity={label}*/}
+            {visibility && <FilterNews entity={label} />}
         </Box>
     </ListItem>
   )

@@ -2,13 +2,11 @@ import {Box, CircularProgress, Typography} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import Post from './Post'
 import InfiniteScroll from 'react-infinite-scroll-component';
-import DateObject from 'react-date-object';
 import ReplyIcon from '@mui/icons-material/Reply';
 import { useDispatch, useSelector } from 'react-redux';
-import { appendNews, appendFavNews, pageNumber } from '../../../redux/newsDataSlice';
+import { appendNews, appendFavNews } from '../../../redux/newsDataSlice';
 
 const PAGE_SIZE = 20;
-const NEWS_KEY = import.meta.env.VITE_NEWS_API_KEY
 const END_POINT=import.meta.env.VITE_URL_END_POINT
 
 const Feed = ({favNewsEvent, handleFavNews}) => {
@@ -18,8 +16,28 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [renderFavTab, toRenderFavTab] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('false')
+
+  const newsSelector = useSelector((state) => state.newsData.filters)
+
+  // News API Not supporting multiple values to filter for one parameter
+  // const language = newsSelector?.language?.map((value) => {
+  //   return value.code
+  // })    
+  // const country = newsSelector?.country?.map((value) => {
+  //   return value.code
+  // })    
+  // const category = newsSelector?.category?.map((value) => {
+  //   return value.code
+  // })    
+
+  const language = newsSelector?.language?.[0]?.code || '';
+  const country = newsSelector?.country?.[0]?.code || '';
+  const category = newsSelector?.categories?.[0]?.code || '';
 
   const dispatch = useDispatch();
+  const applyFilteredBtnTrigger = useSelector((state) => state.newsData.applyFilterTriggered)
+
   let newsd = []
   if(favNewsEvent) {
     newsd = useSelector((state) => state.newsData.favNewsObject); 
@@ -27,23 +45,35 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
     newsd = useSelector((state) => state.newsData.newsObject);
   }
 
-  const fetchData = async (pageNum)=>{
-    const date = new Date();
-    const formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    const url = `https://newsapi.org/v2/everything?q=tesla&from=${formattedDate}&sortBy=publishedAt&pageSize=${PAGE_SIZE}&page=${pageNum}&language=en&apiKey=${NEWS_KEY}`;
-    
+  const fetchData = async (pageNum)=>{ 
     try {
-      const response = await fetch(url);
+
+      const params = new URLSearchParams({
+        pageSize: PAGE_SIZE,
+        pageNum: pageNum
+      });
+
+      if (language) params.append("language", language);
+      if (country) params.append("country", country); 
+      if (category) params.append("category", category); 
+      console.log(`http://${END_POINT}/feed/news?${params.toString()}`)
+      const response = await fetch(`http://${END_POINT}/feed/news?${params.toString()}`, {
+        method:"GET",
+        headers: {
+          "Content-type" : 'application/json'
+        }
+      });
       if(response.ok) {
-        let data = await response.json();
+        const data = await response.json()
         if (data.length < PAGE_SIZE) {
           setHasMore(false);
         } 
         setLoading(false)
-        dispatch(appendNews(data.articles))
+        dispatch(appendNews(data.articles || data.sources))
       } else{
-        const errorData = await response.json();
-        setNews({ message: errorData.message || "Something went wrong" });
+        const error = await response.json()
+        console.log("error : ", error)
+        setErrorMessage({ message: error.message || "Something went wrong" });
       }
     } catch (error) {
       setHasMore(false)
@@ -51,7 +81,7 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
     }
 
   }
-
+  // console.log("Newsd : ", newsd)
   useEffect(() => {
 
     if(!favNewsEvent) return;
@@ -85,11 +115,13 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
   useEffect(() => {
     if(!favNewsEvent) {
       setLoading(true)
-      if(page !== currentPage) {
+      // if(page !== currentPage) {
         fetchData(page);
-      } 
+      // } else{
+        // console.log("in else")
+      // }
     }
-  }, [page]);
+  }, [page, applyFilteredBtnTrigger]);
 
   const handleBackButton = () => {
     handleFavNews(false)
@@ -105,7 +137,22 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
         <Typography sx={{textAlign:'center', width: '100%', padding: '1rem 0rem'}} variant='h5'>Your Favourite News</Typography>
       </Box>  
       }
-      {loading && newsd.length == 0 && <CircularProgress />}
+      {loading && 
+
+        (newsd.length == 0 && 
+          <>
+            <CircularProgress /> 
+            <Typography 
+              variant="h5" 
+              sx={{
+                  width: '70%', 
+                  fontFamily: 'sans-serif',
+                  textAlign:'center'
+              }}> {errorMessage?.message}
+            </Typography> 
+          </>
+        )
+      }
       <InfiniteScroll
         dataLength={newsd?.length}
         next={() => setPage((prev) => prev + 1)}
@@ -114,7 +161,7 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
         endMessage={<p style={{ textAlign: 'center' }}><b>No more results</b></p>}
       > 
         { newsd && 
-          <Typography variant="h5" sx={{width: '70%', fontFamily: 'sans-serif', textAlign:'center'}}> {!newsd?.message}</Typography> 
+          <Typography variant="h5" sx={{width: '70%', fontFamily: 'sans-serif', textAlign:'center'}}> {!errorMessage?.message}</Typography> 
           && 
           newsd.length>0 
           &&

@@ -14,6 +14,8 @@ app.use(express.json())
 app.use(cors())
 
 const port = process.env.PORT || 5000
+const NEWS_KEY = process.env.NEWS_API_KEY
+const NEWS_API_ENDPOINT = process.env.NEWS_API_ENDPOINT
 
 
 const hashedPasswordMiddleWare = (req, res, next) => {
@@ -165,6 +167,42 @@ app.get('/api/fav/', async (req, res) => {
   }
 });
 
+const date = new Date();
+const formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+app.get("/feed/news/", async (req, res) => {
+    
+    try {
+        const {pageSize, pageNum, language, category, country} = req.query
+        const params = new URLSearchParams({
+            q: "tesla",
+            from: formattedDate,
+            sortBy: "publishedAt",
+            pageSize,
+            page: pageNum
+          });
+          
+          if (language) params.append("language", language);
+          if (country) params.append("country", country); 
+          if (category) params.append("category", category); 
+        //   console.log(`${NEWS_API_ENDPOINT}sources?${params.toString()}&apiKey=${NEWS_KEY}`)
+
+        const response = await fetch(`${NEWS_API_ENDPOINT}sources?${params.toString()}&apiKey=${NEWS_KEY}`)
+        
+
+        const data = await response.json();
+
+        if (response.ok) {
+            return res.status(200).json(data);
+        } else if (data.code === "parameterInvalid") {
+            return res.status(400).json({ message: "Hmm... nothing here right now. Try using different filters." });
+        } else {
+            return res.status(response.status).json({ message: data.message || "Something went wrong." });
+        }
+        
+    } catch (error) {
+        return res.status(500).json({"Error ": error})
+    }
+})                                                              
 
 app.listen(port, () => {
     console.log("Running on port:", port)

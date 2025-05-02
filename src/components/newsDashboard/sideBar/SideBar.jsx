@@ -1,4 +1,4 @@
-import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch } from '@mui/material'
+import { Box, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import HomeIcon from '@mui/icons-material/Home';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -7,20 +7,21 @@ import PublicIcon from '@mui/icons-material/Public';
 import CategoryIcon from '@mui/icons-material/Category';
 import ListItemCom from './ListItemCom'
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkApplyFilterTriggered } from '../../../redux/newsDataSlice';
 const SideBar = ({mode, setMode}) => {
 
-      const[filters, setFilters] = useState({
-          lang: [],
-          country: [],
-          category: []
-      })
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const applyFilteredTrigger = useSelector((state) => state.newsData.applyFilterTriggered)
+  const [newsType, setNewsType] = useState('top-headlines');
 
   return (
-    <Box flex={1} p={2} sx={{ display: { xs:"none", sm: "block", width: '30%' }}}>
-      <Box sx={{width: '100%', position:"sticky", left:0, top: '5rem'}}>
+    <Box flex={1} p={2} sx={{ display: { xs:"none", sm: "block", width: '30%' }, background: '#efefef'}}>
+      <Box sx={{width: '100%', position:"sticky", left:0, top: '5rem', height: '90vh', overflowY:"auto", overflowX:'hidden'}}>
         <List>
           <ListItem disablePadding>
-            <ListItemButton component="a" href='/'>
+            <ListItemButton onClick={() => navigate("/")}> 
               <ListItemIcon>
                 <HomeIcon/> 
               </ListItemIcon>
@@ -28,9 +29,27 @@ const SideBar = ({mode, setMode}) => {
             </ListItemButton> 
           </ListItem>
           
-          <ListItemCom label="Language" setFilters={setFilters} icon={<GTranslateIcon/>} sx={{overflow:'scroll'}}/>
-          <ListItemCom label="Country" setFilters={setFilters} icon={<PublicIcon/>}/> 
-          <ListItemCom label="Categories" setFilters={setFilters} icon={<CategoryIcon/>}/> 
+          <ListItemCom label="Language" icon={<GTranslateIcon/>} sx={{overflow:'scroll'}}/>
+          <ListItemCom label="Country" icon={<PublicIcon/>}/> 
+          <ListItemCom label="Categories" icon={<CategoryIcon/>}/> 
+
+          <ListItem disablePadding>
+            <ListItemButton sx={{display:"block"}}>
+              <Typography sx={{marginBottom:'1rem'}}>Browse by</Typography>
+              <ToggleButtonGroup
+                value={newsType}
+                exclusive
+                onChange={(event, newValue) => {
+                  if (newValue !== null) setNewsType(newValue);
+                }}
+                aria-label="News Type"
+              >
+                <ToggleButton value="top-headlines" sx={{fontSize: '0.8rem'}}>Top Headlines</ToggleButton>
+                <ToggleButton value="everything" sx={{fontSize: '0.8rem'}}>Everything</ToggleButton>
+                <ToggleButton value="sources" sx={{fontSize: '0.8rem'}}>Sources</ToggleButton>
+              </ToggleButtonGroup>
+            </ListItemButton>
+          </ListItem>
 
           <ListItem disablePadding>
             <ListItemButton component="a" href='#mode'>
@@ -40,7 +59,19 @@ const SideBar = ({mode, setMode}) => {
               <Switch onChange={(e) => setMode(mode === "light"? "dark" : "light")}/>
             </ListItemButton>
           </ListItem>
+
         </List>
+        <Button 
+          variant='contained' 
+          sx={{
+            position: 'absolute', 
+            bottom:20, 
+            width: '100%', 
+            background:"#145075"
+          }}
+          onClick={()=>dispatch(checkApplyFilterTriggered(applyFilteredTrigger))}
+        > Apply Filters
+        </Button>
       </Box>
     </Box>
   )
