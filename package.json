@@ -19,6 +19,7 @@
     "@toolpad/core": "^0.13.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
+    "framer-motion": "^12.9.4",
     "react": "^19.0.0",
     "react-date-object": "^2.1.9",
     "react-dom": "^19.0.0",

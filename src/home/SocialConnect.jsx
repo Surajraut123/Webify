@@ -14,16 +14,40 @@ const SocialConnect = () => {
                 <Typography>Stay informed with reliable, up-to-date news from around the world. Whether it's politics, technology, entertainment, or local happenings — we've got you covered. Dive into stories that matter, engage in thoughtful discussions, and be part of a community that values truth and transparency.</Typography>
             </Box>
             <Box sx={{display:'flex', gap:'10rem'}}>
-                <Box sx={{borderRadius: '50%', padding: '1rem', boxShadow: '0px 12px 21px -10px #000000'}}>
+                <Box 
+                    sx={{
+                        borderRadius: '50%', 
+                        padding: '1rem', 
+                        boxShadow: '0px 12px 21px -10px #000000'
+                    }} 
+                    onCLick={()=>{window.open("https://www.linkedin.com/in/suraj-raut-software-developer", "_blank")}}>
                     <img src={LinkedIn}/>
                 </Box>
-                <Box sx={{borderRadius: '50%', padding: '1rem', boxShadow: '0px 12px 21px -10px #000000'}}>
+                <Box 
+                    sx={{
+                        borderRadius: '50%', 
+                        padding: '1rem', 
+                        boxShadow: '0px 12px 21px -10px #000000'
+                    }} 
+                    onCLick={()=>{window.open("", "_blank")}}>
                     <img src={Instagram}/>
                 </Box>
-                <Box sx={{borderRadius: '50%', padding: '1rem', boxShadow: '0px 12px 21px -10px #000000'}}>
+                <Box 
+                    sx={{
+                        borderRadius: '50%', 
+                        padding: '1rem', 
+                        boxShadow: '0px 12px 21px -10px #000000'
+                    }} 
+                    onCLick={()=>{window.open("https://github.com/Surajraut123", "_blank")}}>
                     <img src={GitHUb}/>
                 </Box>
-                <Box sx={{borderRadius: '50%', padding: '1rem', boxShadow: '0px 12px 21px -10px #000000'}}>
+                <Box 
+                    sx={{
+                        borderRadius: '50%', 
+                        padding: '1rem', 
+                        boxShadow: '0px 12px 21px -10px #000000'
+                    }} 
+                    onCLick={()=>{window.open("", "_blank")}}>
                     <img src={Telegram}/>
                 </Box>
             </Box>

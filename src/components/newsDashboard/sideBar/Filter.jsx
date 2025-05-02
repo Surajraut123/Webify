@@ -1,18 +1,16 @@
 import { Box, Button } from '@mui/material'
-import React, { useState } from 'react'
+import React from 'react'
 import Utils from '../../../FilterList';
 import AddIcon from '@mui/icons-material/Add';
-const Filter = ({entity, setFilters}) => {
+import { useDispatch, useSelector } from 'react-redux';
+import { filteredNews } from '../../../redux/newsDataSlice';
+const Filter = ({entity}) => {
 
     const entities = Utils[entity] || []
-    const entityType = entity == "Language" ? 'lang' : entity == 'country' ? 'country' : 'category'
-
-    const handleFilters = (code, entityType) => {
-        setFilters(prev => ({
-            ...prev,
-            [entityType]: prev[entityType].includes(code) ? prev[entityType].filter(c => c!==code) : [...prev[entityType], code]
-        }));
-    }
+    const entityType = entity == "Language" ? 'language' : entity == 'Country' ? 'country' : 'categories'
+    const dispatch = useDispatch()
+    const filter = useSelector((state) => state.newsData.filters)
+    console.log(filter)
 
   return (
 
@@ -20,9 +18,9 @@ const Filter = ({entity, setFilters}) => {
         {entities.map(({code, label}) => (
             <Button 
                 key={code} 
-                variant={filters[entityType].includes(code) ? "contained" : 'outlined'}
+                variant={filter[entityType].includes(code) ? "contained" : 'outlined'}
                 startIcon={<AddIcon />} 
-                onClick={() => handleFilters(code, entityType)}
+                onClick={() => dispatch(filteredNews({code, entityType}))}
                 >
                 {label}
             </Button>

@@ -4,7 +4,6 @@ import Feed from "./components/newsDashboard/feed/Feed"
 import RightBar from "./components/newsDashboard/rightbar/RightBar"
 import Navbar from "./components/Navbar"
 import {Box, createTheme, Stack, ThemeProvider} from "@mui/material"
-import Add from "./components/newsDashboard/sideBar/Add"; 
 import { useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from "./home/Home.jsx"
@@ -13,6 +12,7 @@ import { useUser } from '@clerk/clerk-react'
 import SignInUp from './home/SignInUp.jsx'
 import { Provider } from 'react-redux'
 import store from './redux/store.js'
+import ChatBotLauncher from './components/newsDashboard/chatBot/ChatBotLauncher.jsx'
 
 function App() {
 
@@ -63,13 +63,13 @@ function App() {
                             <RightBar />
                           </Stack>
                         </Provider>
+                        <ChatBotLauncher/>
                       </>
                   </ProtectedRoute>
                   } 
                 />
               </Routes>
             )}
-            <Add/>
           </Box>
         </ThemeProvider>
       </BrowserRouter>
