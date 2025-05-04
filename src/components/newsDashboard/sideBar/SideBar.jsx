@@ -1,4 +1,4 @@
-import { Box, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, Button, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import HomeIcon from '@mui/icons-material/Home';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -8,7 +8,7 @@ import CategoryIcon from '@mui/icons-material/Category';
 import ListItemCom from './ListItemCom'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkApplyFilterTriggered } from '../../../redux/newsDataSlice';
+import { checkApplyFilterTriggered, setBrowseBy } from '../../../redux/newsDataSlice';
 const SideBar = ({mode, setMode}) => {
 
   const navigate = useNavigate()
@@ -33,8 +33,10 @@ const SideBar = ({mode, setMode}) => {
           <ListItemCom label="Country" icon={<PublicIcon/>}/> 
           <ListItemCom label="Categories" icon={<CategoryIcon/>}/> 
 
+          <Divider orientation='horizontal'/>
+
           <ListItem disablePadding>
-            <ListItemButton sx={{display:"block"}}>
+            <ListItemButton sx={{display:"block", marginBottom:"1rem"}}>
               <Typography sx={{marginBottom:'1rem'}}>Browse by</Typography>
               <ToggleButtonGroup
                 value={newsType}
@@ -44,13 +46,14 @@ const SideBar = ({mode, setMode}) => {
                 }}
                 aria-label="News Type"
               >
-                <ToggleButton value="top-headlines" sx={{fontSize: '0.8rem'}}>Top Headlines</ToggleButton>
-                <ToggleButton value="everything" sx={{fontSize: '0.8rem'}}>Everything</ToggleButton>
-                <ToggleButton value="sources" sx={{fontSize: '0.8rem'}}>Sources</ToggleButton>
+                <ToggleButton value="top-headlines" sx={{fontSize: '0.8rem'}} onClick={()=>dispatch(setBrowseBy("top-headlines"))}>Top Headlines</ToggleButton>
+                <ToggleButton value="everything" sx={{fontSize: '0.8rem'}} onClick={()=>dispatch(setBrowseBy("everything"))}>Everything</ToggleButton>
+                <ToggleButton value="sources" sx={{fontSize: '0.8rem'}} onClick={()=>dispatch(setBrowseBy("sources"))}>Sources</ToggleButton>
               </ToggleButtonGroup>
             </ListItemButton>
           </ListItem>
 
+          <Divider orientation='horizontal'/>
           <ListItem disablePadding>
             <ListItemButton component="a" href='#mode'>
               <ListItemIcon>

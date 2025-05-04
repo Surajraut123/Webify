@@ -13,11 +13,13 @@ export const newsDataObjectSlice = createSlice({
             country: [{ code: 'in', label: 'India' }],
             categories: [{ code: 'general', label: 'general' }]
         },
-        applyFilterTriggered: false
+        applyFilterTriggered: false,
+        browseBy: 'top-headlines'
     },
     reducers: {
         appendNews: (state, action) => {
-            state.newsObject = [...state.newsObject, ...action.payload],
+            // state.newsObject = [...state.newsObject, ...action.payload], //Currently skipped to store previous collected to prevent extra api calls
+            state.newsObject = action.payload,
             state.pageNumber = state.pageNumber + 1;
             
         },
@@ -31,10 +33,14 @@ export const newsDataObjectSlice = createSlice({
         checkApplyFilterTriggered: (state, action) => {
             state.applyFilterTriggered = !action.payload
             console.log("action : ", action.payload)
+        },
+        setBrowseBy: (state, action) => {
+            state.browseBy = action.payload
+            console.log("ac: ", action)
         }
     }
 })
 
-export const {appendNews, appendFavNews, pageNumber,filteredNews, checkApplyFilterTriggered} = newsDataObjectSlice.actions
+export const {appendNews, appendFavNews, pageNumber,filteredNews, checkApplyFilterTriggered, setBrowseBy} = newsDataObjectSlice.actions
 
 export default newsDataObjectSlice.reducer
