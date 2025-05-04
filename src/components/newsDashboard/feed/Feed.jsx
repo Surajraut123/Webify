@@ -5,21 +5,27 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import ReplyIcon from '@mui/icons-material/Reply';
 import { useDispatch, useSelector } from 'react-redux';
 import { appendNews, appendFavNews } from '../../../redux/newsDataSlice';
+import SourceFeed from './SourceFeed';
 
 const PAGE_SIZE = 20;
 const END_POINT=import.meta.env.VITE_URL_END_POINT
 
 const Feed = ({favNewsEvent, handleFavNews}) => {
 
+  
+  const newsSelector = useSelector((state) => state.newsData.filters)
   const currentPage = useSelector((state) => state.newsData.pageNumber)
+  const browseBy = useSelector((state) => state.newsData.browseBy)
+  const applyFilteredBtnTrigger = useSelector((state) => state.newsData.applyFilterTriggered)
+  const dispatch = useDispatch();
+  
   const [page, setPage] = useState(currentPage == 0 ? 1 : currentPage);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [renderFavTab, toRenderFavTab] = useState(false)
   const [errorMessage, setErrorMessage] = useState('false')
 
-  const newsSelector = useSelector((state) => state.newsData.filters)
-
+  console.log("browseby :", browseBy)
   // News API Not supporting multiple values to filter for one parameter
   // const language = newsSelector?.language?.map((value) => {
   //   return value.code
@@ -35,8 +41,6 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
   const country = newsSelector?.country?.[0]?.code || '';
   const category = newsSelector?.categories?.[0]?.code || '';
 
-  const dispatch = useDispatch();
-  const applyFilteredBtnTrigger = useSelector((state) => state.newsData.applyFilterTriggered)
 
   let newsd = []
   if(favNewsEvent) {
@@ -46,11 +50,15 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
   }
 
   const fetchData = async (pageNum)=>{ 
+    console.log("inside: ", browseBy)
+    // Removing previous collected data from store
+    dispatch(appendNews([]))
     try {
 
       const params = new URLSearchParams({
         pageSize: PAGE_SIZE,
-        pageNum: pageNum
+        pageNum: pageNum,
+        source: browseBy
       });
 
       if (language) params.append("language", language);
@@ -63,13 +71,15 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
           "Content-type" : 'application/json'
         }
       });
+      console.log("response : ", response)
       if(response.ok) {
         const data = await response.json()
+        console.log("data : ", data)
         if (data.length < PAGE_SIZE) {
           setHasMore(false);
         } 
         setLoading(false)
-        dispatch(appendNews(data.articles || data.sources))
+        dispatch(appendNews(data.articles))
       } else{
         const error = await response.json()
         console.log("error : ", error)
@@ -81,7 +91,7 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
     }
 
   }
-  // console.log("Newsd : ", newsd)
+  console.log("Newsd : ", newsd)
   useEffect(() => {
 
     if(!favNewsEvent) return;
@@ -116,12 +126,16 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
     if(!favNewsEvent) {
       setLoading(true)
       // if(page !== currentPage) {
-        fetchData(page);
+        console.log("in effect")
+
+        if(browseBy !== "sources") {
+          fetchData(page);
+        }
       // } else{
         // console.log("in else")
       // }
     }
-  }, [page, applyFilteredBtnTrigger]);
+  }, [page, applyFilteredBtnTrigger, browseBy]);
 
   const handleBackButton = () => {
     handleFavNews(false)
@@ -130,63 +144,96 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
   useEffect(() => {localStorage.removeItem("currentPage")}, [])
 
   return (
-    <Box flex={4} sx={{display: 'flex', alignItems: 'center', justifyContent:'center', flexDirection: 'column', marginTop:'1rem', width: '50%'}}>
-      {favNewsEvent && 
-      <Box sx={{display:'flex', alignItems:'center', width: '100%', borderBottom: '1px solid #d9d9d9' }}>
-        <ReplyIcon sx={{position:'absolute', padding: '0.8rem', borderRadius: '50%', "&:hover": {background: '#d9d9d9', cursor:'pointer'}}} onClick={handleBackButton}/>
-        <Typography sx={{textAlign:'center', width: '100%', padding: '1rem 0rem'}} variant='h5'>Your Favourite News</Typography>
-      </Box>  
-      }
-      {loading && 
-
-        (newsd.length == 0 && 
+    <Box 
+      flex={4} 
+      sx={{
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent:'center', 
+        flexDirection: 'column', 
+        marginTop:'1rem', 
+        width: '50%', 
+        background: '#f1f1f1',
+        padding: '2rem',
+        boxSizing: 'border-box'
+      }}>
+      
+        {browseBy == "sources" ?  
+          <SourceFeed pageSize={PAGE_SIZE} pageNum={page} language={language} country={country} category={category}/>
+          :
           <>
-            <CircularProgress /> 
-            <Typography 
-              variant="h5" 
-              sx={{
-                  width: '70%', 
-                  fontFamily: 'sans-serif',
-                  textAlign:'center'
-              }}> {errorMessage?.message}
-            </Typography> 
-          </>
-        )
-      }
-      <InfiniteScroll
-        dataLength={newsd?.length}
-        next={() => setPage((prev) => prev + 1)}
-        hasMore={hasMore}
-        loader={<h4>{newsd?.message}</h4>}
-        endMessage={<p style={{ textAlign: 'center' }}><b>No more results</b></p>}
-      > 
-        { newsd && 
-          <Typography variant="h5" sx={{width: '70%', fontFamily: 'sans-serif', textAlign:'center'}}> {!errorMessage?.message}</Typography> 
-          && 
-          newsd.length>0 
-          &&
-          newsd.map((item, index) => {
-            const data = favNewsEvent ? item.data : item;
-            return (
-              <Post 
-                key={index} 
-                author={data?.author} 
-                published={data?.publishedAt} 
-                urlToImage={data?.urlToImage}
-                headline={data?.content} 
-                description={data?.description}
-                title={data?.title}
-                urlToReDirect={data?.url}
-                newsData={data}
-                isOpenFavourite={favNewsEvent}
-                setFavNewsClicked={toRenderFavTab}
-              />
+            {favNewsEvent && 
+              <Box sx={{display:'flex', alignItems:'center', width: '100%', borderBottom: '1px solid #d9d9d9' }}>
+                <ReplyIcon sx={{position:'absolute', padding: '0.8rem', borderRadius: '50%', "&:hover": {background: '#d9d9d9', cursor:'pointer'}}} onClick={handleBackButton}/>
+                <Typography sx={{textAlign:'center', width: '100%', padding: '1rem 0rem'}} variant='h5'>Your Favourite News</Typography>
+              </Box>  
+            }
+            {loading 
+              ?
+                (
+                  newsd.length == 0 && 
+                  <>
+                    <CircularProgress /> 
+                    <Typography 
+                      variant="h5" 
+                      sx={{
+                          width: '70%', 
+                          fontFamily: 'sans-serif',
+                          textAlign:'center'
+                      }}> {errorMessage?.message}
+                    </Typography> 
+                  </>
+                )
+              : (
+                  newsd.length == 0 || newsd[0].length==0
+                    ?
+                      <Typography variant='p'>
+                        <Typography variant='span' sx={{fontWeight:800}}>Oops... </Typography>
+                        Nothing to show! Please try another filter.
+                      </Typography>
 
-            )
-          })
-
+                    :
+                      (
+                        <InfiniteScroll
+                          dataLength={newsd?.length}
+                          next={() => setPage((prev) => prev + 1)}
+                          hasMore={hasMore}
+                          loader={<h4>{newsd?.message}</h4>}
+                          endMessage={<p style={{ textAlign: 'center' }}><b>No more results</b></p>}
+                          > 
+                          { newsd && 
+                            <Typography variant="h5" sx={{width: '70%', fontFamily: 'sans-serif', textAlign:'center'}}> {!errorMessage?.message}</Typography> 
+                            && 
+                            newsd.length>0 
+                            &&
+                            newsd.map((item, index) => {
+                              const data = favNewsEvent ? item.data : item;
+                              return (
+                                <Post 
+                                  key={index} 
+                                  author={data?.author} 
+                                  published={data?.publishedAt} 
+                                  urlToImage={data?.urlToImage}
+                                  headline={data?.content} 
+                                  description={data?.description}
+                                  title={data?.title}
+                                  urlToReDirect={data?.url}
+                                  newsData={data}
+                                  isOpenFavourite={favNewsEvent}
+                                  setFavNewsClicked={toRenderFavTab}
+                                />
+    
+                              )
+                            })
+    
+                          }
+                        </InfiniteScroll>   
+                      )
+                ) 
+            } 
+          </>   
         }
-      </InfiniteScroll>
+      
 
       
     </Box>

@@ -172,7 +172,7 @@ const formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()
 app.get("/feed/news/", async (req, res) => {
     
     try {
-        const {pageSize, pageNum, language, category, country} = req.query
+        const {pageSize, pageNum, language, category, country, source} = req.query
         const params = new URLSearchParams({
             q: "tesla",
             from: formattedDate,
@@ -184,9 +184,9 @@ app.get("/feed/news/", async (req, res) => {
           if (language) params.append("language", language);
           if (country) params.append("country", country); 
           if (category) params.append("category", category); 
-        //   console.log(`${NEWS_API_ENDPOINT}sources?${params.toString()}&apiKey=${NEWS_KEY}`)
+        //   console.log(`${NEWS_API_ENDPOINT}${source}?${params.toString()}&apiKey=${NEWS_KEY}`)
 
-        const response = await fetch(`${NEWS_API_ENDPOINT}sources?${params.toString()}&apiKey=${NEWS_KEY}`)
+        const response = await fetch(`${NEWS_API_ENDPOINT}${source}?${params.toString()}&apiKey=${NEWS_KEY}`)
         
 
         const data = await response.json();
