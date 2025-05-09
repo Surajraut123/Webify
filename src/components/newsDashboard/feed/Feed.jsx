@@ -25,7 +25,7 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
   const [renderFavTab, toRenderFavTab] = useState(false)
   const [errorMessage, setErrorMessage] = useState('false')
 
-  console.log("browseby :", browseBy)
+  // console.log("browseby :", browseBy)
   // News API Not supporting multiple values to filter for one parameter
   // const language = newsSelector?.language?.map((value) => {
   //   return value.code
@@ -50,7 +50,7 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
   }
 
   const fetchData = async (pageNum)=>{ 
-    console.log("inside: ", browseBy)
+    // console.log("inside: ", browseBy)
     // Removing previous collected data from store
     dispatch(appendNews([]))
     try {
@@ -64,17 +64,17 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
       if (language) params.append("language", language);
       if (country) params.append("country", country); 
       if (category) params.append("category", category); 
-      console.log(`http://${END_POINT}/feed/news?${params.toString()}`)
+      // console.log(`http://${END_POINT}/feed/news?${params.toString()}`)
       const response = await fetch(`http://${END_POINT}/feed/news?${params.toString()}`, {
         method:"GET",
         headers: {
           "Content-type" : 'application/json'
         }
       });
-      console.log("response : ", response)
+      // console.log("response : ", response)
       if(response.ok) {
         const data = await response.json()
-        console.log("data : ", data)
+        // console.log("data : ", data)
         if (data.length < PAGE_SIZE) {
           setHasMore(false);
         } 
@@ -91,7 +91,7 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
     }
 
   }
-  console.log("Newsd : ", newsd)
+  // console.log("Newsd : ", newsd)
   useEffect(() => {
 
     if(!favNewsEvent) return;
@@ -126,7 +126,7 @@ const Feed = ({favNewsEvent, handleFavNews}) => {
     if(!favNewsEvent) {
       setLoading(true)
       // if(page !== currentPage) {
-        console.log("in effect")
+        // console.log("in effect")
 
         if(browseBy !== "sources") {
           fetchData(page);

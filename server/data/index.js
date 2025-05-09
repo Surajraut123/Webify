@@ -7,6 +7,8 @@ import UserProfile from '../schema/UserProfile.js'
 import bcryptjs from 'bcryptjs'
 import dotenv from 'dotenv'
 import Favourite from '../schema/FavouriteNews.js'
+import { GoogleGenAI } from '@google/genai'
+import chatModel from '../schema/UserChatBot.js'
 
 dotenv.config()
 const app = express();  
@@ -16,7 +18,61 @@ app.use(cors())
 const port = process.env.PORT || 5000
 const NEWS_KEY = process.env.NEWS_API_KEY
 const NEWS_API_ENDPOINT = process.env.NEWS_API_ENDPOINT
+const GEMINI_KEY = process.env.GEMINI_API_KEY
 
+
+const ai = new GoogleGenAI({apiKey: GEMINI_KEY})
+
+app.post("/ai/chat", async (req, res) => {
+    const { userInput } = req.body;
+    const userId = "12345678";
+
+    try {
+        const result = await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents: userInput
+        });
+        const text = result?.text || "No response";
+        const newMessage = {
+            user: userInput,
+            ai: text,
+            timestamp: new Date()
+        }
+        const userExist = await chatModel.findOne({ userId });
+
+        if (!userExist) {
+            const newUser = new chatModel({
+                userId,
+                messages: [newMessage]
+            });
+            await newUser.save();
+        } else {
+            userExist.messages.push(newMessage);
+            await userExist.save();
+        }
+        return res.status(200).json(newMessage);
+        
+
+    } catch (error) {
+        console.error("Chat error:", error);
+        return res.status(500).json({ message: "Something went wrong", error });
+    }
+});
+
+
+app.get("/ai/get/chat/:userId", async (req, res) => {
+    const userId = req.params.userId
+    try {
+        const isExist = await chatModel.findOne({userId});
+        if(isExist) {
+            return res.status(200).json({messages: isExist.messages})
+        } else{
+            return res.status(500).json({Messages: "User Not found"})
+        }
+    } catch (error) {
+        return res.status(400).json({message: "Something went wrong"})
+    }
+})
 
 const hashedPasswordMiddleWare = (req, res, next) => {
     const {password} = req.body;

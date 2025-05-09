@@ -62,8 +62,8 @@ function App() {
                             <Feed favNewsEvent={isClickedFavouriteNews} handleFavNews={setClickedFavouriteNews}/>
                             <RightBar />
                           </Stack>
+                          <ChatBotLauncher/>
                         </Provider>
-                        <ChatBotLauncher/>
                       </>
                   </ProtectedRoute>
                   } 

@@ -29,7 +29,7 @@ const RightBar = () => {
         setLoading(true)
       }
     }
-    fetchTheNewsApi();
+    // fetchTheNewsApi();
   } , [])
 
   const handleRedirect = (type, url) => {
