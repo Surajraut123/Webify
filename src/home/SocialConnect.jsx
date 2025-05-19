@@ -18,36 +18,56 @@ const SocialConnect = () => {
                     sx={{
                         borderRadius: '50%', 
                         padding: '1rem', 
-                        boxShadow: '0px 12px 21px -10px #000000'
+                        boxShadow: '0px 2px 21px -10px #000000',
+                        '&:hover' : {
+                            boxShadow: '0px 12px 21px -10px #000000',
+                            transition: '1s',
+                            cursor: 'pointer'
+                        }
                     }} 
-                    onCLick={()=>{window.open("https://www.linkedin.com/in/suraj-raut-software-developer", "_blank")}}>
+                    onClick={()=>{window.open("https://www.linkedin.com/in/suraj-raut-software-developer", "_blank")}}>
                     <img src={LinkedIn}/>
                 </Box>
                 <Box 
                     sx={{
                         borderRadius: '50%', 
                         padding: '1rem', 
-                        boxShadow: '0px 12px 21px -10px #000000'
+                        boxShadow: '0px 2px 21px -10px #000000',
+                        '&:hover' : {
+                            boxShadow: '0px 12px 21px -10px #000000',
+                            transition: '1s',
+                            cursor: 'pointer'
+                        }
                     }} 
-                    onCLick={()=>{window.open("", "_blank")}}>
+                    onClick={()=>{window.open("", "_blank")}}>
                     <img src={Instagram}/>
                 </Box>
                 <Box 
                     sx={{
                         borderRadius: '50%', 
                         padding: '1rem', 
-                        boxShadow: '0px 12px 21px -10px #000000'
+                        boxShadow: '0px 2px 21px -10px #000000',
+                        '&:hover' : {
+                            boxShadow: '0px 12px 21px -10px #000000',
+                            transition: '1s',
+                            cursor: 'pointer'
+                        }
                     }} 
-                    onCLick={()=>{window.open("https://github.com/Surajraut123", "_blank")}}>
+                    onClick={()=>{window.open("https://github.com/Surajraut123", "_blank")}}>
                     <img src={GitHUb}/>
                 </Box>
                 <Box 
                     sx={{
                         borderRadius: '50%', 
                         padding: '1rem', 
-                        boxShadow: '0px 12px 21px -10px #000000'
+                        boxShadow: '0px 2px 21px -10px #000000',
+                        '&:hover' : {
+                            boxShadow: '0px 12px 21px -10px #000000',
+                            transition: '1s',
+                            cursor: 'pointer'
+                        }
                     }} 
-                    onCLick={()=>{window.open("", "_blank")}}>
+                    onClick={()=>{window.open("", "_blank")}}>
                     <img src={Telegram}/>
                 </Box>
             </Box>

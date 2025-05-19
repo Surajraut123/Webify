@@ -13,7 +13,7 @@ import SignInUp from './home/SignInUp.jsx'
 import { Provider } from 'react-redux'
 import store from './redux/store.js'
 import ChatBotLauncher from './components/newsDashboard/chatBot/ChatBotLauncher.jsx'
-
+import VoiceResponse from "./components/newsDashboard/VoiceResponse.jsx"
 function App() {
 
   const [mode, setMode] = useState("light")
@@ -63,6 +63,7 @@ function App() {
                             <RightBar />
                           </Stack>
                           <ChatBotLauncher/>
+                          {/* <VoiceResponse/> */}
                         </Provider>
                       </>
                   </ProtectedRoute>

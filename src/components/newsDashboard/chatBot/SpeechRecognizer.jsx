@@ -1,9 +1,11 @@
-import { IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import MicIcon from '@mui/icons-material/Mic';
+import Lisetener from "../../../assets/AiListener.gif"
 
-const SpeechRecognizer = () => {
+const SpeechRecognizer = ({setVoiceOn, setVoiceInput}) => {
   const recognitionRef = useRef(null);
+  const isListeningRef = useRef(false);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -15,12 +17,13 @@ const SpeechRecognizer = () => {
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
-    recognition.continuous = true;  
+    recognition.continuous = true;
     recognition.interimResults = false;
 
     recognition.onresult = (event) => {
       const transcript = event.results[event.results.length - 1][0].transcript.trim();
       console.log('You said:', transcript);
+      setVoiceInput(transcript)
     };
 
     recognition.onerror = (event) => {
@@ -28,27 +31,48 @@ const SpeechRecognizer = () => {
     };
 
     recognition.onend = () => {
-      console.log('Speech recognition ended, restarting...');
-      recognition.start(); // auto-restart
+      console.log('Speech recognition ended.');
+      if (isListeningRef.current) {
+        console.log('Restarting recognition...');
+        recognition.start();
+      }
     };
 
     recognitionRef.current = recognition;
   }, []);
 
   const startListening = () => {
-    recognitionRef.current?.start();
-    console.log('Listening...');
+    if (recognitionRef.current && !isListeningRef.current) {
+      isListeningRef.current = true;
+      recognitionRef.current.start();
+      console.log('Started listening...');
+      setVoiceOn(true)
+    }
   };
 
   const stopListening = () => {
-    recognitionRef.current?.stop();
-    console.log('Stopped listening.');
+    if (recognitionRef.current && isListeningRef.current) {
+      isListeningRef.current = false;
+      recognitionRef.current.stop();
+      console.log('Stopped listening.');
+      setVoiceOn(false)
+    }
   };
 
   return (
-    <IconButton color="primary" sx={{borderRadius: '50%', border: '1px solid #d3d3d3', marginRight: '1rem'}} onClick={startListening}>
-      <MicIcon/>
-    </IconButton>
+    !isListeningRef.current ?
+      (<IconButton 
+        color="primary" 
+        sx={{ border: '1px solid #d3d3d3', marginRight: '1rem'}} 
+        onClick={startListening}
+      >
+         <MicIcon />
+      </IconButton>
+      )
+      : 
+      (<Box sx={{width: '20%', cursor:'pointer'}} onClick={stopListening}>
+        <img src={Lisetener} style={{width:'100%', borderRadius: '50%', overflow: 'hidden'}}/>
+      </Box>)
   );
 };
 
