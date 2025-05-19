@@ -14,7 +14,8 @@ export const newsDataObjectSlice = createSlice({
             categories: [{ code: 'general', label: 'general' }]
         },
         applyFilterTriggered: false,
-        browseBy: 'top-headlines'
+        browseBy: 'top-headlines',
+        userChat: []
     },
     reducers: {
         appendNews: (state, action) => {
@@ -37,10 +38,22 @@ export const newsDataObjectSlice = createSlice({
         setBrowseBy: (state, action) => {
             state.browseBy = action.payload
             console.log("ac: ", action)
+        },
+        userAiChats: (state, action) => {
+
+            console.log("action : ", action)
+
+            // At initial array of object is coming
+            if(Array.isArray(action.payload)) {
+                state.userChat = action.payload                
+            } else{
+                // For single message Object is coming
+                state.userChat.push(action.payload)
+            }
         }
     }
 })
 
-export const {appendNews, appendFavNews, pageNumber,filteredNews, checkApplyFilterTriggered, setBrowseBy} = newsDataObjectSlice.actions
+export const {appendNews, appendFavNews, pageNumber,filteredNews, checkApplyFilterTriggered, setBrowseBy, userAiChats} = newsDataObjectSlice.actions
 
 export default newsDataObjectSlice.reducer
