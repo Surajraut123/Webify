@@ -51,7 +51,11 @@ function App() {
             )}
             {preference && (
               <Routes>
-                <Route path="/" element={<Box><Home /></Box>} />
+                <Route path="/" element={
+                  <Box>
+                    <Home />  
+                  </Box>
+                } />
                 <Route path="/feed" element={
                   <ProtectedRoute>
                       <>
