@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
-import HomeCard from './HomeCard'
+// import HomeCard from './HomeCard'
 import LandingLogo from '../assets/LandingLogo.gif'
 import LandingPage from './LandingPage';
 import Footer from './Footer';
 import SocialConnect from './SocialConnect';
 import Premium from '../components/premium/Premium';
 import NewsNavigation from './newsNavigation/NewsNavigation';
+import FeaturesShowcase from './FeaturesShowcase';
+import StatsShowcase from './StatsShowcase';
+import ContactForm from './ContactForm';
 
 const Home = () => {
 
@@ -19,7 +22,10 @@ const Home = () => {
         {premium && <Premium setPremium={setPremium}/>}
       </Box>
       <NewsNavigation/>
+      <FeaturesShowcase/>
+      <StatsShowcase/>
       <SocialConnect/>
+      <ContactForm/>
       <Footer/>
     </Box>
   );
