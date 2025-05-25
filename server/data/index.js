@@ -9,7 +9,7 @@ import dotenv from 'dotenv'
 import Favourite from '../schema/FavouriteNews.js'
 import { GoogleGenAI } from '@google/genai'
 import chatModel from '../schema/UserChatBot.js'
-
+import { useUser } from '@clerk/clerk-react'
 dotenv.config()
 const app = express();  
 app.use(express.json())
@@ -22,10 +22,10 @@ const GEMINI_KEY = process.env.GEMINI_API_KEY
 
 
 const ai = new GoogleGenAI({apiKey: GEMINI_KEY})
-
+// const clerkUser = localStorage.getItem("userid");
 app.post("/ai/chat", async (req, res) => {
-    const { userInput } = req.body;
-    const userId = "12345678";
+    const { userInput, userId } = req.body;
+    // const userId = clerkUser;
 
     try {
         const result = await ai.models.generateContent({

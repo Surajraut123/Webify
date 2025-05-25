@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userAiChats } from '../../../redux/newsDataSlice';
 import 'highlight.js/styles/github.css'; 
 import TypingEffect from "./TypingEffect"
+import { useUser } from '@clerk/clerk-react';
 
 
 const ChatBotLauncher = () => {
@@ -23,6 +24,7 @@ const ChatBotLauncher = () => {
   const userChats = useSelector((state) => state.newsData.userChat)
   const [loader, setLoader] = useState(false)
 
+  const {user } = useUser()
   const [isVoiceOn, setVoiceOn] = useState(false);
   const [voiceInput, setVoiceInput] = useState('');
 
@@ -30,7 +32,7 @@ const ChatBotLauncher = () => {
     // setLoader(true)
     const getChat = async () => {
       try {
-        const chats = await fetch("http://localhost:5000/ai/get/chat/12345678",{
+        const chats = await fetch(`http://localhost:5000/ai/get/chat/${user?.id}`,{
           method: "GET",
           headers: {
             "Content-type" : "application/json"
@@ -63,7 +65,8 @@ const ChatBotLauncher = () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          userInput: input
+          userInput: input,
+          userId: user?.id
         })
       });
       

@@ -17,7 +17,7 @@ const NewsSlider = () => {
   useEffect(() => {
     const getNewsDetails = async () => {
       try {
-        const response = await fetch(`https://newsdata.io/api/${currentPage}/latest?language=en&apikey=pub_3a3a51ab5f59496da60c5841c613a9d1&q=pizza`, {
+        const response = await fetch(`https://newsdata.io/api/${currentPage}/latest?language=en&apikey=pub_3a3a51ab5f59496da60c5841c613a9d1&q=social`, {
           method: "GET",
           headers: {
             "Content-type" : "application/json"
