@@ -26,7 +26,8 @@ const LandingPage = (props) => {
             setIsSignInOpen(false)
         }
     }
-    console.log(user)
+    console.log(user?.id)
+    localStorage.setItem("userid", user?.id)
 
     useEffect(() => {
         const handleClickOutside = (event) => {
